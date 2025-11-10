@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>OCR 로그인</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}?v=3">
+</head>
+<body>
+  <h2>OCR 프로젝트</h2>
+
+  {% if error %}
+    <p style="color:red;">{{ error }}</p>
+  {% endif %}
+  {% if success %}
+    <p style="color:green;">{{ success }}</p>
+  {% endif %}
+
+  <button onclick="openModal('loginModal')">로그인</button>
+  <button onclick="openModal('signupModal')">회원가입</button>
+
+  {% with messages = get_flashed_messages() %}
+  {% if messages %}
+    {% for msg in messages %}
+      {% if "로그인이 필요합니다" in msg %}
+        <p style="color:red;">{{ msg }}</p>
+        {% elif "비밀번호" in msg or "ID" in msg %}
+        <p style="color:red;">{{ msg }}</p>
+      {% else %}
+        <p style="color:green;">{{ msg }}</p>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+  {% endwith %}
+
+  {% include 'login_modal.html' %}
+  {% include 'signup_modal.html' %}
+
+  <!-- JS 모듈 -->
+  <script type="module" src="{{ url_for('static', filename='js/main.js') }}?v=3"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+<div id="signupModal" class="modal">
+  <div class="modal-content">
+    <span class="close-modal" onclick="closeModal('signupModal')">&times;</span>
+    <h3>회원가입</h3>
+    <form method="POST" action="/signup">
+      <input type="text" name="user_id" placeholder="ID" required>
+      <input type="password" name="password" placeholder="비밀번호" required>
+      <input type="email" name="email" placeholder="이메일" required>
+      <button type="submit">회원가입</button>
+    </form>
+  </div>
+</div>

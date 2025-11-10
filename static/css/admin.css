@@ -1,0 +1,98 @@
+/* ========== 기본 설정 ========== */
+body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background-color: #f5f6fa;
+    margin: 0;
+    padding: 0;
+}
+
+/* ========== 컨테이너 ========== */
+.admin-container {
+    width: 80%;
+    margin: 50px auto;
+    text-align: center;
+}
+
+/* 제목 */
+h2 {
+    color: #2c3e50;
+}
+
+/* ========== 테이블 스타일 ========== */
+.user-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.user-table th {
+    background-color: #3498db;
+    color: white;
+    padding: 12px;
+    font-size: 16px;
+    border-bottom: 2px solid #ccc; /* 연한 회색 */
+}
+
+.user-table td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd; /* 자연스러운 밝은 회색 */
+    vertical-align: middle;
+}
+
+.user-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+/* ========== 로그아웃 버튼 ========== */
+.logout-btn {
+    display: inline-block;
+    margin-top: 25px;
+    padding: 10px 20px;
+    color: white;
+    background-color: #e74c3c;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.logout-btn:hover {
+    background-color: #c0392b;
+}
+
+/* ========== 공통 버튼 스타일 ========== */
+.delete-btn,
+.view-btn {
+  display: inline-block;
+  padding: 8px 14px;           /* 동일한 크기 */
+  font-size: 14px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  color: white;
+  transition: background-color 0.2s ease;
+  text-decoration: none;
+  vertical-align: middle;      /* 수직 정렬 맞추기 */
+}
+
+/* 삭제 버튼 */
+.delete-btn {
+  background-color: #e74c3c;
+}
+
+.delete-btn:hover {
+  background-color: #c0392b;
+}
+
+/* 보기 버튼 */
+.view-btn {
+  background-color: #3498db;
+  margin-left: 6px;            /* 버튼 간격 */
+}
+
+.view-btn:hover {
+  background-color: #217dbb;
+}

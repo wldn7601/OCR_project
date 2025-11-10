@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ filename }} 결과 보기</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/image_detail.css') }}">
+</head>
+<body>
+  <h2>{{ user_id }}님의 {{ filename }} OCR 결과</h2>
+
+  {% if final_total %}
+    <h3 class="receipt-total">💰 이 영수증의 총 결제 금액: {{ "{:,}".format(final_total) }} 원</h3>
+  {% else %}
+    <h3 class="receipt-total warn">💰 총 결제 금액을 인식하지 못했습니다.</h3>
+  {% endif %}
+
+
+  <div class="image-column">
+    <div class="image-block">
+      <h4>📷 원본 이미지</h4>
+
+      <img id="originalImage"
+          src="{{ url_for('user.serve_user_image', user_id=user_id, category='original', filename=filename) }}"
+          class="preview-img" alt="원본 이미지">
+    </div>
+
+    <div class="image-block">
+      <h4>🧹 전처리 이미지</h4>      
+
+      <img id="processedImage"
+          src="{{ url_for('user.serve_user_image', user_id=user_id, category='preprocessed', filename=filename) }}"
+          class="preview-img" alt="전처리 이미지">
+    </div>
+
+    <!-- <div class="image-block">
+      <h4>🧠 OCR 인식 결과 시각화</h4>
+
+      <img
+        src="{{ url_for('user.serve_user_image', user_id=user_id, category='visualization', filename=filename) }}"
+        class="preview-img" alt="시각화 이미지">
+    </div> -->
+    <div class="image-block">
+      <h4>🧠 OCR 인식 결과 시각화</h4>
+      <canvas
+        id="ocrCanvas"
+        class="preview-canvas"
+        data-image-src="{{ url_for('user.serve_user_image', user_id=user_id, category='original', filename=filename) }}">
+      </canvas>
+    </div>
+  </div>
+
+
+  <div class="section">
+    <h3>📄 all.json (전체 OCR 결과 정규화 적용)</h3>
+    {% if all_json_str %}
+      <pre class="json-box">{{ all_json_str }}</pre>
+    {% else %}
+      <p class="warn">⚠️ all.json 파일이 없습니다.</p>
+    {% endif %}
+  </div>
+
+  <div class="section">
+    <h3>💰 result.json (금액 파싱 결과)</h3>
+    {% if result_json_str %}
+      <pre class="json-box">{{ result_json_str }}</pre>
+    {% else %}
+      <p class="warn">⚠️ result.json 파일이 없습니다.</p>
+    {% endif %}
+  </div>
+
+  <a href="{{ url_for('user.user_page', user_id=user_id) }}" class="back-btn">← 목록으로 돌아가기</a>
+
+  <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+  <script src="{{ url_for('static', filename='js/image_detail.js') }}"></script>
+</body>
+</html>

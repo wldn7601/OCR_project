@@ -1,0 +1,92 @@
+/* ================= 전체 레이아웃 ================= */
+body {
+  font-family: "Noto Sans KR", sans-serif;
+  background: #fafafa;
+  margin: 0;
+  padding: 0;
+}
+
+h2, .receipt-total {
+  text-align: center;
+  margin: 20px 0 10px;
+}
+
+.warn {
+  color: #cc0000;
+  text-align: center;
+}
+
+/* ================= 이미지 세로 정렬 ================= */
+.image-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;   /* 가로축 중앙 정렬 */
+  justify-content: center;
+  gap: 40px;
+  margin-top: 30px;
+}
+
+.image-block {
+  text-align: center;
+  width: 100%;
+}
+
+.image-block h4 {
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+/* ================= 이미지 및 Canvas 공통 ================= */
+.preview-img,
+.ocr-canvas {
+  display: block;
+  margin: 0 auto;                /* 중앙 정렬 */
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  max-width: 90%;
+  max-height: 600px;
+  object-fit: contain;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background: white;
+}
+
+/* ================= JSON 결과 영역 ================= */
+.section {
+  margin: 50px auto;
+  width: 90%;
+  text-align: center;
+}
+
+.json-box {
+  background: #111;             /* 검은색 배경 */
+  color: #c2e8b0;               /* 밝은 초록색 텍스트 (가독성용) */
+  border: 1px solid #333;
+  border-radius: 6px;
+  padding: 16px;
+  white-space: pre-wrap;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.9rem;
+  overflow-x: auto;
+  text-align: left;
+  box-shadow: 0 0 12px rgba(0,255,100,0.15);
+}
+
+
+/* ================= 뒤로가기 버튼 ================= */
+.back-btn {
+  display: block;
+  margin: 30px auto 50px;
+  width: fit-content;
+  padding: 10px 20px;
+  text-decoration: none;
+  background: #444;
+  color: white;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+}
+
+.back-btn:hover {
+  background: #666;
+}

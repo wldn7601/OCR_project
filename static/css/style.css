@@ -1,0 +1,102 @@
+/* 전체 화면 레이아웃 */
+body {
+    font-family: "Noto Sans KR", sans-serif;
+    background-color: #f8f9fa;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+    margin-top: 80px;
+    color: #343a40;
+}
+
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    margin: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.2s ease-in-out;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* 메시지 색상 */
+p {
+    font-size: 15px;
+    margin: 5px;
+}
+
+/* 모달 기본 스타일 */
+#loginModal, #signupModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* 모달 창 내용 */
+#loginModal form, #signupModal form {
+    background-color: #ffffff;
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 10px;
+    width: 300px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    text-align: left;
+}
+
+h3 {
+    text-align: center;
+    color: #333;
+}
+
+label {
+    display: block;
+    margin-top: 10px;
+    font-weight: bold;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* 닫기 버튼 */
+button[type="button"] {
+    background-color: #6c757d;
+}
+
+button[type="button"]:hover {
+    background-color: #5a6268;
+}
+
+/* 반응형 지원 */
+@media (max-width: 480px) {
+    #loginModal form, #signupModal form {
+        width: 80%;
+        margin-top: 30%;
+    }
+
+    h2 {
+        font-size: 22px;
+    }
+}

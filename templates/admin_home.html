@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>관리자 페이지</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}">
+</head>
+<body>
+    <div class="admin-container">
+        <h2>관리자 페이지</h2>
+        <p>현재 등록된 사용자 목록</p>
+        <table class="user-table">
+            <thead>
+                <tr>
+                <th>사용자 ID</th>
+                <th>이메일</th>
+                <th>가입일</th>
+                <th>관리</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                <td>{{ user.user_id }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.created_at.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                <td>
+                    <form action="{{ url_for('admin.delete_user', user_id=user.user_id) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="delete-btn">삭제</button>
+                    </form>
+                    <a href="{{ url_for('user.user_page', user_id=user.user_id) }}" class="view-btn">보기</a>
+                </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+
+
+        <a href="/" class="logout-btn">로그아웃</a>
+    </div>
+</body>
+</html>

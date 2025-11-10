@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>{{ user_id }}님의 페이지</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/user.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/loading.css') }}">
+</head>
+<body>
+  <div class="user-container">
+    {% if session['user_id'] == 'admin' %}
+      <div class="admin-banner">
+        👑 <strong>관리자 모드</strong> — 현재 {{ user_id }}님의 페이지를 보고 있습니다.
+        <a href="{{ url_for('admin.admin_page') }}" class="back-admin-btn">← 관리자 페이지로 돌아가기</a>
+      </div>
+    {% endif %}
+
+    <h2>{{ user_id }}님의 영수증 업로드 내역</h2>
+
+    <form id="uploadForm" action="{{ url_for('user.user_page', user_id=user_id) }}" method="POST" enctype="multipart/form-data">
+        <label for="file" class="custom-file-label">📁 파일 선택</label>
+         <input type="file" id="file" name="file" accept=".png,.jpg,.jpeg" required>
+        <span id="file-name">아직 선택된 파일이 없습니다.</span>
+        <button type="submit" id="uploadBtn">OCR 적용 및 업로드</button>
+    </form>
+
+    <!-- ✅ 로딩 오버레이 -->
+    <div id="loadingOverlay">
+      <div class="loading-content">
+        <div class="spinner"></div>
+        <p>⏳ OCR 적용 중입니다... 잠시만 기다려주세요.</p>
+      </div>
+    </div>
+
+    <!-- ✅ 플래시 메시지 출력 -->
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flash-messages">
+          {% for msg in messages %}
+          <li>{{ msg }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    {% if image_info_list %}
+    <h3 class="total-spent">
+      💰 총 지출 금액: 
+      <span>
+        {% if total_spent %}
+          {{ "{:,}".format(total_spent) }} 원
+        {% else %}
+          0 원
+        {% endif %}
+      </span>
+    </h3>
+    
+    <table class="image-table">
+      <thead>
+        <tr>
+          <th>이미지</th>
+          <th>미리보기</th>
+          <th>총액</th>
+          <th>삭제</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for img in image_info_list %}
+        <tr id="row-{{ img.name }}">
+          <td>{{ img.name }}</td>
+          <td>
+            <a href="{{ url_for('user.image_detail', user_id=user_id, filename=img.name) }}">
+              <img src="{{ url_for('user.serve_user_image', user_id=user_id, category='original', filename=img.name) }}"
+                  alt="{{ img.name }}" width="150" height="150" style="object-fit: contain;">
+            </a>
+          </td>
+          <td>
+            {% if img.total %}
+              {{ "{:,}".format(img.total) }} 원
+            {% else %}
+              -
+            {% endif %}
+          </td>
+          <td>
+            <button class="delete-btn" data-filename="{{ img.name }}">삭제</button>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+  {% else %}
+    <p>아직 업로드한 이미지가 없습니다.</p>
+  {% endif %}
+
+
+    <a href="/" class="logout-btn">로그아웃</a>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/user.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/loading.js') }}"></script>
+</body>
+</html>

@@ -35,5 +35,9 @@ with app.app_context():
 
 
 if __name__ == "__main__":
-
+    # gunicorn --bind 0.0.0.0:8000 main:app --daemo
+    # :포트번호 .py파일의 이름:flask 객체이름 --deamon
+    
+    # ps aux | grep gunicorn
+    # 실행 중인 gunicorn 보기
     app.run(host="0.0.0.0", port=5000, debug=True)

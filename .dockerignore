@@ -1,0 +1,28 @@
+# 가상환경, 캐시
+venv/
+__pycache__/
+*.pyc
+*.pyo
+
+# 로그 및 임시 파일
+*.log
+*.tmp
+
+# 이미지 결과 (Docker 내부에서 다시 생성됨)
+images/
+results/
+
+# Git 관련
+.git/
+.gitignore
+
+# IDE / OS 파일
+.vscode/
+.DS_Store
+
+# 환경 설정 파일 (보안상)
+.env
+
+# 테스트, 문서
+tests/
+docs/

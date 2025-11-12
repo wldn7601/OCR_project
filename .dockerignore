@@ -1,5 +1,5 @@
 # 가상환경, 캐시
-venv/
+venv312/
 __pycache__/
 *.pyc
 *.pyo

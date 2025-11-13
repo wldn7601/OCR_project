@@ -1,8 +1,13 @@
 # 가상환경, 캐시
 venv312/
 __pycache__/
+**/__pycache__/
 *.pyc
 *.pyo
+
+; 사용하지 않는 python 파일
+services/paddleocr_service.py
+services/tesseract_ocr.py
 
 # 로그 및 임시 파일
 *.log

@@ -1,0 +1,36 @@
+/* 전체 화면에 인터랙티브 배경 레이어 */
+.interactive-bg {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+  background: #0f0f11;
+}
+
+/* 배경에 떠 있는 오브젝트 */
+.floating-object {
+  position: absolute;
+  width: 140px;
+  height: 140px;
+  background: linear-gradient(145deg, #1c1c1f, #0b0b0d);
+  border-radius: 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.5);
+  transition: box-shadow 0.1s linear;
+}
+
+/* 원형 오브젝트 */
+.circle {
+  border-radius: 50%;
+}
+
+/* 약간의 색상 포인트 */
+.obj-blue {
+  background: linear-gradient(145deg, #1b2a4b, #0c1324);
+}
+.obj-purple {
+  background: linear-gradient(145deg, #2c1b4b, #140c24);
+}
+.obj-red {
+  background: linear-gradient(145deg, #4b1b1b, #240c0c);
+}

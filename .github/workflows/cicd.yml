@@ -1,32 +1,53 @@
 name: ci-cd
+
 on:
   push:
-    # main 브런치에 push될 때 진행
+    # main 브런치에 push되면 실행
     branches: ["main"]
-# 현재 workflow에서 공통으로 쓸 변수
+
+# 이 workflow 전체에서 공통으로 사용할 환경변수 정의.
 env:
+  # Docker Hub에 올릴 이미지의 기본 이름 (레포지토리 이름).
   IMAGE_NAME: wldn7601/receipt-ocr
 
 jobs:
   build-and-push:
-    # github이 제공하는 ubuntu 환경에서 실행
+    # GitHub가 제공하는 호스트 중 ubuntu-latest 이미지에서 Job을 실행.
     runs-on: ubuntu-latest
+
     steps:
       # 현재 레포지토리의 코드를 Actions 가상머신에 내려받는다.
       # → 빌드에 필요한 Dockerfile, requirements.txt 등을 사용할 수 있게 함.
-      - uses: actions/checkout@v4
+      - name: Checkout source code
+        uses: actions/checkout@v4
 
+      # Docker 이미지 태그에 사용할 버전 정보(githubAction + 날짜 + SHORT_SHA)를 생성.
       - name: Set version tags
-        id: vars
-        # 현재 커밋의 해시를 7자리로 잘라 SHORT_SHA로 저장.
+        id: vars   # 이후 steps.vars.outputs.* 로 이 단계의 출력값을 참조할 수 있게 하는 ID.
         run: |
-          echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
+          # DATE_TAG: YYYYMMDD 형식의 날짜 문자열.
+          DATE_TAG=$(date +'%Y%m%d')
 
-      # secrets에 저장된 값을 이용해 Docker Hub에 로그인
+          # SHORT_SHA: 마지막 커밋의 SHA 해시를 7자리로 자른 값.
+          SHORT_SHA=${GITHUB_SHA::7}
+
+          # FULL_TAG: 실제 Docker 태그로 사용할 문자열.
+          # 형식: githubAction-날짜-SHORT_SHA
+          FULL_TAG="githubAction-${DATE_TAG}-${SHORT_SHA}"
+
+          # GitHub Actions의 step output으로 값을 전달.
+          # → 이후 steps.vars.outputs.DATE_TAG / SHORT_SHA / FULL_TAG로 사용 가능.
+          echo "DATE_TAG=$DATE_TAG" >> $GITHUB_OUTPUT
+          echo "SHORT_SHA=$SHORT_SHA" >> $GITHUB_OUTPUT
+          echo "FULL_TAG=$FULL_TAG" >> $GITHUB_OUTPUT
+
+      # secrets에 저장된 값을 이용해 Docker Hub에 로그인.
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
+          # Docker Hub 계정 아이디 (예: wldn7601)
           username: ${{ secrets.DOCKERHUB_USERNAME }}
+          # Docker Hub Access Token 또는 비밀번호
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       # Docker Buildx는 캐시 및 멀티플랫폼 빌드를 지원하는 확장 빌더.
@@ -34,39 +55,63 @@ jobs:
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
+      # Docker 이미지를 빌드하고 Docker Hub로 푸시.
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
-          # 현재 폴더(Dockerfile이 위치한 곳)를 빌드 컨텍스트로 지정.
+          # 빌드 컨텍스트로 사용할 디렉토리.
+          # 여기서는 레포지토리 루트(.)를 사용 → Dockerfile도 루트에 있다고 가정.
           context: .
-          # 빌드 후 Docker Hub로 푸시
           push: true
-          # 커밋 해시의 값 7자리, latest 두개의 태그로 이미지 생성
+          # 이 빌드에서 생성할 이미지 태그 목록.
+          # 첫 번째 태그: githubAction-YYYYMMDD-SHORTSHA 형식의 고유 버전 태그.
+          # 두 번째 태그: latest (항상 최신 버전으로 덮어쓰기).
           tags: |
-            ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.SHORT_SHA }}
+            ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.FULL_TAG }}
             ${{ env.IMAGE_NAME }}:latest
-          # cache-from/to: 이전 빌드의 레이어 캐시를 Docker Hub에서 가져와 빌드 속도를 높임. 
+
+          # 이전 빌드에서 생성한 레이어 캐시를 Docker Hub의 buildcache 이미지에서 가져와 재사용.
+          # 빌드 시간이 단축되고, 불필요한 재빌드를 줄일 수 있음.
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache
+
+          # 이번 빌드 결과의 레이어 캐시를 Docker Hub의 buildcache 이미지에 저장.
+          # mode=max: 가능한 많은 레이어를 캐시로 저장해 다음 빌드에서 최대한 재사용하도록 함.
           cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=max
 
   deploy:
-    # build-and-push Job이 성공해야 실행됨.
+    # build-and-push Job이 성공해야만 실행됨.
     needs: build-and-push
-    # Actions runner에서 SSH 명령을 실행.
+
+    # 마찬가지로 GitHub가 제공하는 ubuntu-latest 러너에서 실행.
     runs-on: ubuntu-latest
+
     steps:
-      # ssh 배포
+      # SSH로 클라우드 인스턴스(배포 서버)에 접속해서
+      # docker compose pull/up 명령을 실행해 실제 서비스를 갱신.
       - name: SSH Deploy
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
-          # 중간에 에러 발생시 workflow 전체 중단
+          # script 중간에 하나라도 실패하면 워크플로 전체를 실패로 처리.
           script_stop: true
+          # 실제 서버에서 실행할 쉘 스크립트.
           script: |
+            # 배포 서버에서 OCR_Project 디렉토리로 이동.
             cd /home/ubuntu/OCR_Project
+
+            # 사용할 태그를 latest로 고정.
+            # - 위 build 단계에서 항상 latest 태그도 함께 푸시하므로
+            # 서버는 항상 가장 최근 빌드 이미지를 사용하게 됨.
             export TAG=latest
+
+            # Docker Hub로부터 새로 당겨옴.
             docker compose pull
+
+            # 새 이미지를 기반으로 컨테이너를 재기동.
+            # -d 옵션으로 백그라운드(detached) 모드로 실행.
             docker compose up -d
+
+            # 사용되지 않는 오래된 이미지 레이어들을 정리해서 디스크 공간 확보.
             docker image prune -f

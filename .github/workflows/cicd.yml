@@ -1,3 +1,4 @@
+# jenkins를 사용할 땐 깃허브 Actions에서 비활성화
 name: ci-cd
 
 on:

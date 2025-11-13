@@ -1,36 +1,33 @@
-/* 전체 화면에 인터랙티브 배경 레이어 */
+/* 밝은 회색 기반 Soft Light 배경 */
 .interactive-bg {
-  position: fixed;
-  inset: 0;
-  overflow: hidden;
-  z-index: -1;
-  pointer-events: none;
-  background: #0f0f11;
+    position: fixed;
+    inset: 0;
+    background: #848489;   /* 또는 #e6e6ea */
+    overflow: hidden;
+    pointer-events: none;
+    z-index: -1;
 }
 
-/* 배경에 떠 있는 오브젝트 */
+
+/* 물체는 다크톤 + 은은한 색감 */
 .floating-object {
-  position: absolute;
-  width: 140px;
-  height: 140px;
-  background: linear-gradient(145deg, #1c1c1f, #0b0b0d);
-  border-radius: 20px;
-  box-shadow: 0 0 20px rgba(0,0,0,0.5);
-  transition: box-shadow 0.1s linear;
+    position: absolute;
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    background: #2a2a32;
+    will-change: transform, box-shadow;
+    transform: translateZ(0);
 }
 
-/* 원형 오브젝트 */
-.circle {
-  border-radius: 50%;
-}
+/* 컬러바리에이션 — 너무 튀지 않는 톤다운 컬러 */
+.obj1 { background: #2b2b34; }
+.obj2 { background: #32323d; }
+.obj3 { background: #3a3a47; }
+.obj4 { background: #2e2e38; }
+.obj5 { background: #353542; }
+.obj6 { background: #2a2a32; }
+.obj7 { background: #31313b; }
 
-/* 약간의 색상 포인트 */
-.obj-blue {
-  background: linear-gradient(145deg, #1b2a4b, #0c1324);
-}
-.obj-purple {
-  background: linear-gradient(145deg, #2c1b4b, #140c24);
-}
-.obj-red {
-  background: linear-gradient(145deg, #4b1b1b, #240c0c);
-}
+/* 일부는 원형 */
+.circle { border-radius: 50%; }

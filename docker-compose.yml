@@ -1,0 +1,20 @@
+# docker-compose.yml
+version: "3.9"
+
+services:
+  web:
+    image: wldn7601/receipt-ocr:${TAG:-latest}  # CI에서 푸시할 이미지
+    container_name: ocr_web # 컨테이너 이름
+    restart: unless-stopped
+    env_file: .env  # API 키, DB URL 등 비공개 값
+    ports:
+      - "8000:8000"
+    volumes:
+      # Flask에서 결과 파일 저장하는 디렉터리 유지용
+      - ./images:/app/images
+      - ./results:/app/results
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      interval: 20s
+      timeout: 3s
+      retries: 3

@@ -17,10 +17,12 @@ db.init_app(app)
 from routes.auth_routes import auth_bp
 from routes.admin_routes import admin_bp
 from routes.user_routes import user_bp
+from routes.health_routes import health_bp
 
 app.register_blueprint(auth_bp)
 app.register_blueprint(admin_bp)
 app.register_blueprint(user_bp)
+app.register_blueprint(health_bp)
 
 with app.app_context():
     db.create_all()
@@ -30,8 +32,6 @@ with app.app_context():
         db.session.add(admin)
         db.session.commit()
         print("[INFO] 기본 관리자 계정(admin/admin) 생성 완료")
-
-
 
 
 if __name__ == "__main__":

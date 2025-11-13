@@ -2,6 +2,7 @@
 # Python 기본 무시 항목
 # ==========================
 __pycache__/
+**/__pycache__/
 *.py[cod]
 *.pyo
 *.pyd

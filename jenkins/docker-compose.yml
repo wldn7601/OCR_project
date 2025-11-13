@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  jenkins:
+    build: .
+    container_name: jenkins_web
+    # Jenkins가 호스트 Docker를 제어해야 하므로 root로 실행(연습환경 권장)
+    user: "0:0"
+    ports:
+      - "8080:8080"      # Jenkins UI
+      - "50000:50000"    # 에이전트(옵션)
+    environment:
+      - JAVA_OPTS=-Dorg.apache.commons.jelly.tags.fmt.timeZone=Asia/Seoul
+      - TZ=Asia/Seoul
+    volumes:
+      - jenkins_home:/var/jenkins_home           # Jenkins 데이터 영구화
+      - /var/run/docker.sock:/var/run/docker.sock # 호스트 Docker 제어
+      - ../:/workspace/OCR_Project               # OCR_Project 소스/compose 접근
+    restart: always
+
+volumes:
+  jenkins_home:

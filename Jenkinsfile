@@ -19,11 +19,11 @@ pipeline {
     stage('Set Tags') {
       steps {
         script {
-          env.SHORT_SHA = sh(script: 'git -C ${PROJECT_DIR} rev-parse --short=7 HEAD', returnStdout: true).trim()
-          env.DATE_TAG = sh(script: 'date +%Y%m%d', returnStdout: true).trim()
+          env.SHORT_SHA = sh(script: "git rev-parse --short=7 HEAD", returnStdout: true).trim()
+          env.DATE_TAG  = sh(script: "date +%Y%m%d", returnStdout: true).trim()
           env.BUILD_TAG = "jenkins-${env.DATE_TAG}-${env.SHORT_SHA}"
         }
-        echo "TAG = ${env.BUILD_TAG}"
+       echo "TAG = ${env.BUILD_TAG}"
       }
     }
     stage('Docker Login') {

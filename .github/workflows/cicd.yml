@@ -1,52 +1,68 @@
 name: ci-cd
 on:
   push:
+    # main 브런치에 push될 때 진행
     branches: ["main"]
-
+# 현재 workflow에서 공통으로 쓸 변수
 env:
   IMAGE_NAME: wldn7601/receipt-ocr
 
 jobs:
   build-and-push:
+    # github이 제공하는 ubuntu 환경에서 실행
     runs-on: ubuntu-latest
     steps:
+      # 현재 레포지토리의 코드를 Actions 가상머신에 내려받는다.
+      # → 빌드에 필요한 Dockerfile, requirements.txt 등을 사용할 수 있게 함.
       - uses: actions/checkout@v4
 
       - name: Set version tags
         id: vars
+        # 현재 커밋의 해시를 7자리로 잘라 SHORT_SHA로 저장.
         run: |
           echo "SHORT_SHA=${GITHUB_SHA::7}" >> $GITHUB_OUTPUT
 
+      # secrets에 저장된 값을 이용해 Docker Hub에 로그인
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # Docker Buildx는 캐시 및 멀티플랫폼 빌드를 지원하는 확장 빌더.
+      # 이걸 통해 build-push-action이 최적화된 캐시 빌드를 수행 가능.
       - name: Set up Buildx
         uses: docker/setup-buildx-action@v3
 
       - name: Build and Push
         uses: docker/build-push-action@v6
         with:
+          # 현재 폴더(Dockerfile이 위치한 곳)를 빌드 컨텍스트로 지정.
           context: .
+          # 빌드 후 Docker Hub로 푸시
           push: true
+          # 커밋 해시의 값 7자리, latest 두개의 태그로 이미지 생성
           tags: |
             ${{ env.IMAGE_NAME }}:${{ steps.vars.outputs.SHORT_SHA }}
             ${{ env.IMAGE_NAME }}:latest
+          # cache-from/to: 이전 빌드의 레이어 캐시를 Docker Hub에서 가져와 빌드 속도를 높임. 
           cache-from: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.IMAGE_NAME }}:buildcache,mode=max
 
   deploy:
+    # build-and-push Job이 성공해야 실행됨.
     needs: build-and-push
+    # Actions runner에서 SSH 명령을 실행.
     runs-on: ubuntu-latest
     steps:
+      # ssh 배포
       - name: SSH Deploy
         uses: appleboy/ssh-action@v1.2.0
         with:
           host: ${{ secrets.SSH_HOST }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
+          # 중간에 에러 발생시 workflow 전체 중단
           script_stop: true
           script: |
             cd /home/ubuntu/OCR_Project
